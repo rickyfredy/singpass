@@ -19,6 +19,21 @@ use App\Http\Controllers\TestController;
 //     return view('welcome');
 // });
 
-Route::get('/', [TestController::class, 'index']);
+Route::group(array('domain' => 'cupu.app'), function()
+{
+    Route::get('/', [TestController::class, 'prd']);
+});
+
+Route::group(array('domain' => 'pre.cupu.app'), function()
+{
+	Route::get('/', [TestController::class, 'pre']);
+});
+
+
+Route::group(array('domain' => 'localhost'), function()
+{
+	Route::get('/', [TestController::class, 'pre']);
+});
+
 
 Route::get('/login/success', [TestController::class, 'success']);
