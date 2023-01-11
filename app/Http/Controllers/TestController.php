@@ -7,7 +7,7 @@ class TestController extends Controller
 {
     public function index()
     {
-        $endpoint = 'https://sandbox.api.myinfo.gov.sg/com/v4/authorize';
+        $endpoint = 'https://test.api.myinfo.gov.sg/com/v4/authorize';
         $appId = 'STG-201403826N-LAZADAPAY-ACCTVERIFY';
         $callback = 'https://pre.cupu.app/login/success';
         $scope = 'name';
@@ -16,13 +16,16 @@ class TestController extends Controller
 
         $codeChallenge = $this->getCodeChallenge($codeVerifier);
 
-        echo $endpoint . '?' . 'client_id=' . $appId .
+        $url = $endpoint . '?' . 'client_id=' . $appId .
             '&scope=' . $scope . 
             '&redirect_uri=' . $callback .
             '&response_type=code' .
             '&code_challenge=' . $codeChallenge .
             '&code_challenge_method=S256' . 
             '&purpose_id=' . $purposeId;
+
+
+        header('Location: ' . $url);
     }
 
     function getCodeChallenge($codeVerifier){
