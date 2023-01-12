@@ -19,12 +19,12 @@ use App\Http\Controllers\TestController;
 //     return view('welcome');
 // });
 
-Route::group(array('domain' => 'cupu.app'), function()
+Route::group(array('domain' => 'pre.cupu.app'), function()
 {
-    Route::get('/', [TestController::class, 'prd']);
+    Route::get('/', [TestController::class, 'pre']);
 });
 
-Route::group(array('domain' => 'pre.cupu.app'), function()
+Route::group(array('domain' => 'cupu.app'), function()
 {
 	Route::get('/', [TestController::class, 'pre']);
 });
