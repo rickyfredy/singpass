@@ -36,4 +36,6 @@ Route::group(array('domain' => 'localhost'), function()
 });
 
 
-Route::get('/login/success', [TestController::class, 'success']);
+Route::get('/login/success', [TestController::class, 'successLogin']);
+
+Route::get('/get/token', [TestController::class, 'successToken']);

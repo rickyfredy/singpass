@@ -2,17 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
  
 class TestController extends Controller
 {
+    // https://pre.cupu.app/login/success?code=myinfo-com-mqXXSI1oG5NGrXrZIpBM9jKuBz1K9AGi0ZPC0STX
+
+    $hostPrd = 'https://api.myinfo.gov.sg';
+    $hostPre = 'https://test.api.myinfo.gov.sg';
+
+    $codeVerifier = 'codeVerifier';
+
     public function prd()
     {
-        $endpoint = 'https://api.myinfo.gov.sg/com/v4/authorize';
+        $endpoint = $this->hostPrd . '/com/v4/authorize';
         $appId = 'PROD-201403826N-LAZADAPAY-ACCTVERIFY';
         $callback = 'https://cupu.app/login/success';
         $scope = 'name';
         $purposeId = '562225ca';
-        $codeVerifier = 'hellow';
+        $codeVerifier = $this->codeVerifier;
 
         $codeChallenge = $this->getCodeChallenge($codeVerifier);
 
@@ -30,12 +38,12 @@ class TestController extends Controller
 
     public function pre()
     {
-        $endpoint = 'https://test.api.myinfo.gov.sg/com/v4/authorize';
+        $endpoint = $this->hostPre . '/com/v4/authorize';
         $appId = 'STG-201403826N-LAZADAPAY-ACCTVERIFY';
         $callback = 'https://pre.cupu.app/login/success';
         $scope = 'name';
         $purposeId = 'e6439d08';
-        $codeVerifier = 'hellow';
+        $codeVerifier = $this->codeVerifier;
 
         $codeChallenge = $this->getCodeChallenge($codeVerifier);
 
@@ -58,8 +66,41 @@ class TestController extends Controller
         return $codeChallenge;
     }
 
-    public function success()
+    public function successLogin(Request $request)
     {
-        echo 'Hellow doc';
+        // https://sandbox.api.myinfo.gov.sg/com/v4/token
+
+        $endpoint = $this->hostPre . '/com/v4/token';
+        $appId = 'STG-201403826N-LAZADAPAY-ACCTVERIFY';
+        $authCode = $request->input('code');
+        $callback = 'https://pre.cupu.app/get/token';
+        $codeVerifier = $this->codeVerifier;
+        $grantType = 'authorization_code';
+        $clientAssertionType = 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer';
+        $jktThumbprint = $this->generateJwkThumbprint('');
+        $clientAssertion = $this->generateClientAssertion('', '', '', '');
+
+        $url = $endpoint . '?' . 'grant_type=' . $grantType .
+            '&code=' . $authCode .
+            '&redirect_uri=' . $redirectUrl .
+            '&client_id=' . $clientId .
+            '&code_verifier=' . $codeVerifier .
+            '&client_assertion_type=' . $clientAssertionType .
+            '&client_assertion=' . $clientAssertion;
+
+        echo 'Redirect to get Token ------> ' . $url;
     }
+
+    function generateJwkThumbprint($publicKey){
+        return '';
+    }
+
+    function generateClientAssertion($tokenUrl, $clientId, $privateSigningKey, $jktThumbprint){
+        return '';
+    }
+
+    public function successToken(Request $request)
+    {
+    }
+
 }
