@@ -78,8 +78,8 @@ class TestController extends Controller
 
         $url = $endpoint . '?' . 'grant_type=' . $grantType .
             '&code=' . $authCode .
-            '&redirect_uri=' . $redirectUrl .
-            '&client_id=' . $clientId .
+            '&redirect_uri=' . $callback .
+            '&client_id=' . $appId .
             '&code_verifier=' . $codeVerifier .
             '&client_assertion_type=' . $clientAssertionType .
             '&client_assertion=' . $clientAssertion;
