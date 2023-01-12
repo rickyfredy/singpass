@@ -3,24 +3,21 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+
+define('HOSTPRD', 'https://api.myinfo.gov.sg');
+define('HOSTPRE', 'https://test.api.myinfo.gov.sg');
+define('CODEVERIFIER', 'codeVerifier');
  
 class TestController extends Controller
 {
-    // https://pre.cupu.app/login/success?code=myinfo-com-mqXXSI1oG5NGrXrZIpBM9jKuBz1K9AGi0ZPC0STX
-
-    $hostPrd = 'https://api.myinfo.gov.sg';
-    $hostPre = 'https://test.api.myinfo.gov.sg';
-
-    $codeVerifier = 'codeVerifier';
-
     public function prd()
     {
-        $endpoint = $this->hostPrd . '/com/v4/authorize';
+        $endpoint = HOSTPRD . '/com/v4/authorize';
         $appId = 'PROD-201403826N-LAZADAPAY-ACCTVERIFY';
         $callback = 'https://cupu.app/login/success';
         $scope = 'name';
         $purposeId = '562225ca';
-        $codeVerifier = $this->codeVerifier;
+        $codeVerifier = CODEVERIFIER;
 
         $codeChallenge = $this->getCodeChallenge($codeVerifier);
 
@@ -38,12 +35,12 @@ class TestController extends Controller
 
     public function pre()
     {
-        $endpoint = $this->hostPre . '/com/v4/authorize';
+        $endpoint = HOSTPRE . '/com/v4/authorize';
         $appId = 'STG-201403826N-LAZADAPAY-ACCTVERIFY';
         $callback = 'https://pre.cupu.app/login/success';
         $scope = 'name';
         $purposeId = 'e6439d08';
-        $codeVerifier = $this->codeVerifier;
+        $codeVerifier = CODEVERIFIER;
 
         $codeChallenge = $this->getCodeChallenge($codeVerifier);
 
@@ -54,7 +51,6 @@ class TestController extends Controller
             '&code_challenge=' . $codeChallenge .
             '&code_challenge_method=S256' . 
             '&purpose_id=' . $purposeId;
-
 
         header('Location: ' . $url);
     }
@@ -70,11 +66,11 @@ class TestController extends Controller
     {
         // https://sandbox.api.myinfo.gov.sg/com/v4/token
 
-        $endpoint = $this->hostPre . '/com/v4/token';
+        $endpoint = HOSTPRE . '/com/v4/token';
         $appId = 'STG-201403826N-LAZADAPAY-ACCTVERIFY';
         $authCode = $request->input('code');
         $callback = 'https://pre.cupu.app/get/token';
-        $codeVerifier = $this->codeVerifier;
+        $codeVerifier = CODEVERIFIER;
         $grantType = 'authorization_code';
         $clientAssertionType = 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer';
         $jktThumbprint = $this->generateJwkThumbprint('');
