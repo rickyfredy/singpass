@@ -73,8 +73,11 @@ class TestController extends Controller
     {
         // https://sandbox.api.myinfo.gov.sg/com/v4/token
 
-        $publicKeyPath = storage_path('/app/jwk/public-key.pem');
-        $privateKeyPath = storage_path('/app/jwk/private-key.pem');
+        // $publicKeyPath = storage_path('/app/jwk/public-key.pem');
+        // $privateKeyPath = storage_path('/app/jwk/private-key.pem');
+
+        $publicKeyPath = '/root/ssl/pre/cert/pre_cupu_app.crt';
+        $privateKeyPath = '/root/ssl/pre/csr/pre.cupuapp.key';
 
         $endpoint = HOSTPRE . '/com/v4/token';
         $appId = 'STG-201403826N-LAZADAPAY-ACCTVERIFY';
