@@ -147,8 +147,10 @@ class TestController extends Controller
     }
 
     public function jwks(){
+        $publicKeyPath = storage_path('/app/jwk/public-key.pem');
+
         $jwk = JWKFactory::createFromKeyFile(
-            storage_path('/app/jwk/pre_cupu_app.crt'),
+            $publicKeyPath,
             null,
             [
                 'use' => 'sig',
