@@ -19,12 +19,12 @@ use App\Http\Controllers\TestController;
 //     return view('welcome');
 // });
 
-Route::group(array('domain' => 'pre.cupu.app'), function()
+Route::group(array('domain' => 'cupu.app'), function()
 {
     Route::get('/', [TestController::class, 'pre']);
 });
 
-Route::group(array('domain' => 'cupu.app'), function()
+Route::group(array('domain' => 'pre.cupu.app'), function()
 {
 	Route::get('/', [TestController::class, 'pre']);
 });
@@ -39,3 +39,6 @@ Route::group(array('domain' => 'localhost'), function()
 Route::get('/login/success', [TestController::class, 'successLogin']);
 
 Route::get('/get/token', [TestController::class, 'successToken']);
+
+
+Route::get('/auth/jwks', [TestController::class, 'jwks']);

@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
+use Strobotti\JWK\KeyFactory;
 
 define('HOSTPRD', 'https://api.myinfo.gov.sg');
 define('HOSTPRE', 'https://test.api.myinfo.gov.sg');
-define('CODEVERIFIER', 'codeVerifier');
  
 class TestController extends Controller
 {
@@ -17,7 +18,7 @@ class TestController extends Controller
         $callback = 'https://cupu.app/login/success';
         $scope = 'name';
         $purposeId = '562225ca';
-        $codeVerifier = CODEVERIFIER;
+        $codeVerifier = random_bytes(32);
 
         $codeChallenge = $this->getCodeChallenge($codeVerifier);
 
@@ -40,7 +41,7 @@ class TestController extends Controller
         $callback = 'https://pre.cupu.app/login/success';
         $scope = 'name';
         $purposeId = 'e6439d08';
-        $codeVerifier = CODEVERIFIER;
+        $codeVerifier = random_bytes(32);
 
         $codeChallenge = $this->getCodeChallenge($codeVerifier);
 
@@ -70,7 +71,7 @@ class TestController extends Controller
         $appId = 'STG-201403826N-LAZADAPAY-ACCTVERIFY';
         $authCode = $request->input('code');
         $callback = 'https://pre.cupu.app/get/token';
-        $codeVerifier = CODEVERIFIER;
+        $codeVerifier = random_bytes(32);
         $grantType = 'authorization_code';
         $clientAssertionType = 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer';
         $jktThumbprint = $this->generateJwkThumbprint('');
@@ -88,6 +89,12 @@ class TestController extends Controller
     }
 
     function generateJwkThumbprint($publicKey){
+  //       let jwkKey = await jose.JWK.asKey(ephemeralPublicKey, 'pem');
+  // let jwkThumbprintBuffer = await jwkKey.thumbprint('SHA-256');
+  // let jwkThumbprint = jose.util.base64url.encode(jwkThumbprintBuffer, 'utf8');
+
+  // return jwkThumbprint;
+
         return '';
     }
 
@@ -97,6 +104,24 @@ class TestController extends Controller
 
     public function successToken(Request $request)
     {
+    }
+
+    public function jwks(){
+        $pem = Storage::get('jwk\public-key.pem');
+
+        $options = [
+           'use' => 'sig',
+           'alg' => 'RS256',
+           'kid' => 'eXaunmL',
+        ];
+
+        $keyFactory = new KeyFactory();
+        $key = $keyFactory->createFromPem($pem, $options);
+
+        $keySet = [$key];
+
+        return response($keySet, 200)
+            ->header('Content-Type', 'application/json');
     }
 
 }
