@@ -83,7 +83,7 @@ class TestController extends Controller
         $codeVerifier = random_bytes(32);
         $grantType = 'authorization_code';
         $clientAssertionType = 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer';
-        $jktThumbprint = $this->generateJwkThumbprint($publicKey);
+        $jktThumbprint = $this->generateJwkThumbprint($publicKeyPath);
         $clientAssertion = $this->generateClientAssertion($endpoint, $appId, $privateKeyPath, $jktThumbprint);
 
         $url = $endpoint . '?' . 'grant_type=' . $grantType .
