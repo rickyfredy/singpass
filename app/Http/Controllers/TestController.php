@@ -114,9 +114,8 @@ class TestController extends Controller
 
     function generateClientAssertion($tokenUrl, $clientId, $privateKeyPath, $jktThumbprint){
 
-        $jwk = JWKFactory::createFromKeyFile(
+        $jwk = JWKFactory::createFromCertificateFile(
             $privateKeyPath,
-            null,
             [
                 'use' => 'sig',
             ]
