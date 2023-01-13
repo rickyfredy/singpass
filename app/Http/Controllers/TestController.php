@@ -115,7 +115,7 @@ class TestController extends Controller
         $randomStr = Str::random(40);
 
         $payload = json_encode([
-            'sub': $clientId
+            'sub': $clientId,
             "jti": $randomStr,
             "aud": $tokenUrl,
             "iss": $appId,
