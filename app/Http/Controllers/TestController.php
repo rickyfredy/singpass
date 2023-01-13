@@ -94,9 +94,9 @@ class TestController extends Controller
             '&client_assertion_type=' . $clientAssertionType .
             '&client_assertion=' . $clientAssertion;
 
-        echo 'Redirect to get Token ------> ' . $url;
+        // echo 'Redirect to get Token ------> ' . $url;
 
-        // header('Location: ' . $url);
+        header('Location: ' . $url);
     }
 
     function generateJwkThumbprint($publicKeyPath){
