@@ -13,6 +13,7 @@
         "web-token/jwt-core": "^3.1",
         "web-token/jwt-key-mgmt": "^3.1",
         "web-token/jwt-signature": "^3.1",
+        "web-token/jwt-signature-algorithm-ecdsa": "^3.1",
         "web-token/jwt-signature-algorithm-rsa": "^3.1"
     },
     "require-dev": {

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Jose\Component\KeyManagement\JWKFactory;
 use Jose\Component\Core\JWKSet;
-use Jose\Component\Signature\Algorithm\PS256;
+use Jose\Component\Signature\Algorithm\ES256;
 use Jose\Component\Signature\JWSBuilder;
 use Jose\Component\Core\AlgorithmManager;
 use Jose\Component\Signature\Serializer\CompactSerializer;
@@ -139,7 +139,7 @@ class TestController extends Controller
 
         // Builder
         $algorithmManager = new AlgorithmManager([
-            new PS256(),
+            new ES256(),
         ]);
 
         $jwsBuilder = new JWSBuilder($algorithmManager);
@@ -147,7 +147,7 @@ class TestController extends Controller
         $jws = $jwsBuilder
             ->create()
             ->withPayload($payload)
-            ->addSignature($jwk, ['alg' => 'PS256']) // We add a signature with a simple protected header
+            ->addSignature($jwk, ['alg' => 'ES256']) // We add a signature with a simple protected header
             ->build();
 
         $serializer = new CompactSerializer(); // The serializer
