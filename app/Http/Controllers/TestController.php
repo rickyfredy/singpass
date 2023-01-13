@@ -102,6 +102,7 @@ class TestController extends Controller
     function generateJwkThumbprint($publicKeyPath){
         $jwk = JWKFactory::createFromKeyFile(
             $publicKeyPath,
+            null,
             [
                 'use' => 'sig',
             ]
