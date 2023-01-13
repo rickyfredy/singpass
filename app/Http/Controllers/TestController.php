@@ -7,7 +7,10 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Jose\Component\KeyManagement\JWKFactory;
 use Jose\Component\Core\JWKSet;
+use Jose\Component\Signature\Algorithm\PS256;
+use Jose\Component\Signature\JWSBuilder;
 use Jose\Component\Core\AlgorithmManager;
+use Jose\Component\Signature\Serializer\CompactSerializer;
 
 define('HOSTPRD', 'https://api.myinfo.gov.sg');
 define('HOSTPRE', 'https://test.api.myinfo.gov.sg');
@@ -109,37 +112,47 @@ class TestController extends Controller
         return $jwkThumbprint;
     }
 
-    function generateClientAssertion($tokenUrl, $clientId, $privateSigningKey, $jktThumbprint){
+    function generateClientAssertion($tokenUrl, $clientId, $privateKeyPath, $jktThumbprint){
+
+        $jwk = JWKFactory::createFromKeyFile(
+            $privateKeyPath,
+            null,
+            [
+                'use' => 'sig',
+            ]
+        );
         
         $timestamp = time();
         $randomStr = Str::random(40);
 
         $payload = json_encode([
-            'sub': $clientId,
-            "jti": $randomStr,
-            "aud": $tokenUrl,
-            "iss": $appId,
-            "iat": $timestamp,
-            "exp": $timestamp + 300,
-            "cnf" : {
-                "jkt": $jwkThumbprint
-            }
+            'sub' => $clientId,
+            'jti' => $randomStr,
+            'aud' => $tokenUrl,
+            'iss' => $clientId,
+            'iat' => $timestamp,
+            'exp' => $timestamp + 300,
+            'cnf' => [
+                'jkt' => $jktThumbprint
+            ]
         ]);
 
         // Builder
         $algorithmManager = new AlgorithmManager([
-            new HS256(),
+            new PS256(),
         ]);
 
         $jwsBuilder = new JWSBuilder($algorithmManager);
 
         $jws = $jwsBuilder
-            ->create()                               // We want to create a new JWS
-            ->withPayload($payload)                  // We set the payload
-            ->addSignature($jwk, ['alg' => 'HS256']) // We add a signature with a simple protected header
-            ->build();                               // We build it
+            ->create()
+            ->withPayload($payload)
+            ->addSignature($jwk, ['alg' => 'PS256']) // We add a signature with a simple protected header
+            ->build();
 
-        return $jws;
+        $serializer = new CompactSerializer(); // The serializer
+
+        return $serializer->serialize($jws, 0);
     }
 
     public function successToken(Request $request)
@@ -147,6 +160,7 @@ class TestController extends Controller
     }
 
     public function jwks(){
+
         $publicKeyPath = storage_path('/app/jwk/public-key.pem');
 
         $jwk = JWKFactory::createFromKeyFile(

@@ -11,7 +11,9 @@
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
         "web-token/jwt-core": "^3.1",
-        "web-token/jwt-key-mgmt": "^3.1"
+        "web-token/jwt-key-mgmt": "^3.1",
+        "web-token/jwt-signature": "^3.1",
+        "web-token/jwt-signature-algorithm-rsa": "^3.1"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
