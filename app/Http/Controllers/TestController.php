@@ -188,6 +188,14 @@ class TestController extends Controller
 
 
         // JWK
+        $privateKeyJwk = JWKFactory::createFromKeyFile(
+            $privateKeyPath,
+            null,
+            [
+                'use' => 'sig',
+            ]
+        );
+
         $jwk = JWKFactory::createFromCertificateFile(
             $publicKeyPath,
             [
@@ -206,7 +214,7 @@ class TestController extends Controller
         $jws = $jwsBuilder
             ->create()
             ->withPayload(json_encode($payload))
-            ->addSignature($jwk, ['alg' => 'RS256', 'typ' => 'dpop+jwt', 'jwk' => $jwk->jsonSerialize()])
+            ->addSignature($privateKeyJwk, ['alg' => 'RS256', 'typ' => 'dpop+jwt', 'jwk' => $jwk->jsonSerialize()])
             ->build();
 
         $serializer = new CompactSerializer(); // The serializer
