@@ -174,11 +174,11 @@ class TestController extends Controller
         $timestamp = date();
 
         $payload = [
-            'htu': url,
-            'htm': method,
-            'jti': Str::random(40),
-            'iat': $timestamp,
-            'exp': $timestamp + 120,
+            'htu' => url,
+            'htm' => method,
+            'jti' => Str::random(40),
+            'iat' => $timestamp,
+            'exp' => $timestamp + 120,
         ];
 
         if (!empty($ath)){
