@@ -99,10 +99,9 @@ class TestController extends Controller
         echo 'code_verifier: ' . $codeVerifier . '<br />';
         echo 'client_assertion_type: ' . $clientAssertionType . '<br />';
         echo 'client_assertion: ' . $clientAssertion . '<br />';
-        echo 'DPoP: ' . $dpop . '<br />';
+        echo 'DPoP: ' . $dpop . '<br /><br />';
 
-
-        var_dump($response->body());
+        echo 'Response: ' . $response->body();
     }
 
     function generateJwkThumbprint($publicKeyPath){
