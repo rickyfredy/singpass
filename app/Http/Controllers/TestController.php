@@ -15,7 +15,7 @@ use Jose\Component\Signature\Serializer\CompactSerializer;
 define('HOSTPRD', 'https://api.myinfo.gov.sg');
 define('HOSTPRE', 'https://test.api.myinfo.gov.sg');
 define('PATHPUBLICKEY', '/app/jwk/public-key2.pem');
-define('PATHPRIVATEKEY', '/app/jwk/private-key2.pem');
+define('PATHPRIVATEKEY', '/app/jwk/public-key2.pem');
  
 class TestController extends Controller
 {
