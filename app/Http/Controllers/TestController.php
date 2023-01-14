@@ -102,7 +102,7 @@ class TestController extends Controller
                 'Cache-Control' => 'no-cache',
                 'DPoP' => $dpop
             ])
-            ->post('http://example.com/users', [
+            ->post($endpoint, [
                 'grant_type' => $grantType,
                 'code' => $authCode,
                 'redirect_uri' => $callback,
