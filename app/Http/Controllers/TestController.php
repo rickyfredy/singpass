@@ -155,7 +155,7 @@ class TestController extends Controller
 
         // JWS
         $algorithmManager = new AlgorithmManager([
-            new ES256(),
+            new RS256(),
         ]);
 
         $jwsBuilder = new JWSBuilder($algorithmManager);
@@ -163,7 +163,7 @@ class TestController extends Controller
         $jws = $jwsBuilder
             ->create()
             ->withPayload($payload)
-            ->addSignature($jwk, ['alg' => 'ES256', 'typ' => 'JWT'])
+            ->addSignature($jwk, ['alg' => 'RS256', 'typ' => 'JWT'])
             ->build();
 
         $serializer = new CompactSerializer(); // The serializer
