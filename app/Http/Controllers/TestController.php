@@ -73,8 +73,11 @@ class TestController extends Controller
     {
         // https://sandbox.api.myinfo.gov.sg/com/v4/token
 
-        $publicKeyPath = storage_path('/app/jwk/pre_cupu_app.crt');
-        $privateKeyPath = storage_path('/app/jwk/pre.cupuapp.key');
+        $publicKeyPath = storage_path('/app/jwk/public-key.pem');
+        $privateKeyPath = storage_path('/app/jwk/private-key.pem');
+
+        // $publicKeyPath = storage_path('/app/jwk/pre_cupu_app.crt');
+        // $privateKeyPath = storage_path('/app/jwk/pre.cupuapp.key');
 
         $endpoint = HOSTPRE . '/com/v4/token';
         $appId = 'STG-201403826N-LAZADAPAY-ACCTVERIFY';
@@ -100,8 +103,9 @@ class TestController extends Controller
     }
 
     function generateJwkThumbprint($publicKeyPath){
-        $jwk = JWKFactory::createFromCertificateFile(
+        $jwk = JWKFactory::createFromKeyFile(
             $publicKeyPath,
+            null,
             [
                 'use' => 'sig',
             ]
@@ -114,8 +118,9 @@ class TestController extends Controller
 
     function generateClientAssertion($tokenUrl, $clientId, $privateKeyPath, $jwkThumbprint){
 
-        $jwk = JWKFactory::createFromCertificateFile(
+        $jwk = JWKFactory::createFromKeyFile(
             $privateKeyPath,
+            null,
             [
                 'use' => 'sig',
             ]
@@ -160,10 +165,11 @@ class TestController extends Controller
 
     public function jwks(){
 
-        $publicKeyPath = storage_path('/app/jwk/pre_cupu_app.crt');
+        $publicKeyPath = storage_path('/app/jwk/public-key.pem');
 
-        $jwk = JWKFactory::createFromCertificateFile(
+        $jwk = JWKFactory::createFromKeyFile(
             $publicKeyPath,
+            null,
             [
                 'use' => 'sig',
             ]
