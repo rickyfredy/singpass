@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Jose\Component\KeyManagement\JWKFactory;
 use Jose\Component\Core\JWKSet;
-use Jose\Component\Signature\Algorithm\RS256;
+use Jose\Component\Signature\Algorithm\ES256;
 use Jose\Component\Signature\JWSBuilder;
 use Jose\Component\Core\AlgorithmManager;
 use Jose\Component\Signature\Serializer\CompactSerializer;
@@ -79,13 +79,8 @@ class TestController extends Controller
 
     public function successLogin(Request $request)
     {
-        // https://sandbox.api.myinfo.gov.sg/com/v4/token
-
         $publicKeyPath = storage_path(PATHPUBLICKEY);
         $privateKeyPath = storage_path(PATHPRIVATEKEY);
-
-        // $publicKeyPath = storage_path('/app/jwk/pre_cupu_app.crt');
-        // $privateKeyPath = storage_path('/app/jwk/pre.cupuapp.key');
 
         $endpoint = HOSTPRE . '/com/v4/token';
         $appId = 'STG-201403826N-LAZADAPAY-ACCTVERIFY';
@@ -97,17 +92,26 @@ class TestController extends Controller
         $jwkThumbprint = $this->generateJwkThumbprint($publicKeyPath);
         $clientAssertion = $this->generateClientAssertion($endpoint, $appId, $privateKeyPath, $jwkThumbprint);
 
-        $url = $endpoint . '?' . 'grant_type=' . $grantType .
-            '&code=' . $authCode .
-            '&redirect_uri=' . $callback .
-            '&client_id=' . $appId .
-            '&code_verifier=' . $codeVerifier .
-            '&client_assertion_type=' . $clientAssertionType .
-            '&client_assertion=' . $clientAssertion;
+        $dpop = $this->generateDpop($endpoint, 'POST', $publicKeyPath, $privateKeyPath, null);
 
-        // echo 'Redirect to get Token ------> ' . $url;
 
-        header('Location: ' . $url);
+        $response = Http::asForm()
+            ->withHeaders([
+                'Cache-Control' => 'no-cache',
+                'DPoP' => $dpop
+            ])
+            ->post('http://example.com/users', [
+                'grant_type' => $grantType,
+                'code' => $authCode,
+                'redirect_uri' => $callback,
+                'client_id' => $appId,
+                'code_verifier' => $codeVerifier,
+                'client_assertion_type' => $clientAssertionType,
+                'client_assertion' => $clientAssertion
+            ]);
+
+
+        var_dump($response);
     }
 
     function generateJwkThumbprint($publicKeyPath){
@@ -166,8 +170,52 @@ class TestController extends Controller
         return $serializer->serialize($jws, 0);
     }
 
+    function generateDpop($url, $method, $publicKeyPath, $privateKeyPath, $ath){
+        $timestamp = date();
+
+        $payload = [
+            'htu': url,
+            'htm': method,
+            'jti': Str::random(40),
+            'iat': $timestamp,
+            'exp': $timestamp + 120,
+        ];
+
+        if (!empty($ath)){
+            $payload['ath'] = $ath;
+        }
+
+
+        // JWK
+        $jwk = JWKFactory::createFromCertificateFile(
+            $publicKeyPath,
+            [
+                'use' => 'sig',
+            ]
+        );
+
+
+        // JWS
+        $algorithmManager = new AlgorithmManager([
+            new ES256(),
+        ]);
+
+        $jwsBuilder = new JWSBuilder($algorithmManager);
+
+        $jws = $jwsBuilder
+            ->create()
+            ->withPayload($payload)
+            ->addSignature($jwk, ['alg' => 'ES256', 'typ' => 'dpop+jwt', 'jwk' => $jwk->jsonSerialize()])
+            ->build();
+
+        $serializer = new CompactSerializer(); // The serializer
+
+        return $serializer->serialize($jws, 0);
+    }
+
     public function successToken(Request $request)
     {
+        echo 'Success get token';
     }
 
     public function jwks(){
@@ -189,25 +237,6 @@ class TestController extends Controller
 
         return response($jwkSetJson, 200)
             ->header('Content-Type', 'application/json');
-
-
-        // $pem = Storage::get('jwk\public-key.pem');
-
-        // $options = [
-        //    'use' => 'sig',
-        //    'alg' => 'RS256',
-        //    'kid' => 'eXaunmL',
-        // ];
-
-        // $keyFactory = new KeyFactory();
-        // $key = $keyFactory->createFromPem($pem, $options);
-
-        // $keySet = [
-        //     'keys' => [$key]
-        // ];
-
-        // return response($keySet, 200)
-        //     ->header('Content-Type', 'application/json');
     }
 
 }
