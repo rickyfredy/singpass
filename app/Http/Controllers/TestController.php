@@ -16,6 +16,8 @@ define('HOSTPRD', 'https://api.myinfo.gov.sg');
 define('HOSTPRE', 'https://test.api.myinfo.gov.sg');
 define('PATHPUBLICKEY', '/app/jwk/public-key2.pem');
 define('PATHPRIVATEKEY', '/app/jwk/private-key2.pem');
+define('CODEVERIFIER', '%2BaU3NYPUsP0cbk5%2BSAWtlFkKWG5hPllumdEuYiVSOpQ%3D');
+define('CODECHALLENGE', 'Z2nQOxb0tXNZX0I72iL7L58vCkL4siVSXW%2F3WhDP0Yo%3D');
  
 class TestController extends Controller
 {
@@ -26,9 +28,7 @@ class TestController extends Controller
         $callback = 'https://cupu.app/login/success';
         $scope = 'name';
         $purposeId = '562225ca';
-        $codeVerifier = random_bytes(32);
-
-        $codeChallenge = $this->getCodeChallenge($codeVerifier);
+        $codeChallenge = CODECHALLENGE;
 
         $url = $endpoint . '?' . 'client_id=' . $appId .
             '&scope=' . $scope . 
@@ -44,14 +44,18 @@ class TestController extends Controller
 
     public function pre()
     {
+        // $codeVerifier = urlencode(base64_encode(random_bytes(32)));
+        // $codeChallenge = $this->getCodeChallenge($codeVerifier);
+        // echo 'codeVerifier: ' . $codeVerifier . '<br />';
+        // echo 'codeChallenge: ' . $codeChallenge . '<br />';
+        // dd();
+
         $endpoint = HOSTPRE . '/com/v4/authorize';
         $appId = 'STG-201403826N-LAZADAPAY-ACCTVERIFY';
         $callback = 'https://pre.cupu.app/login/success';
         $scope = 'name';
         $purposeId = 'e6439d08';
-        $codeVerifier = random_bytes(32);
-
-        $codeChallenge = $this->getCodeChallenge($codeVerifier);
+        $codeChallenge = CODECHALLENGE;
 
         $url = $endpoint . '?' . 'client_id=' . $appId .
             '&scope=' . $scope . 
@@ -65,10 +69,12 @@ class TestController extends Controller
     }
 
     function getCodeChallenge($codeVerifier){
-        $challengeBytes = hash('sha256', $codeVerifier, true);
-        $codeChallenge = rtrim(strtr(base64_encode($challengeBytes), '+/', '-_'), '=');
+        $encryptedCodeVerifier = hash('sha256', $codeVerifier, true);
 
-        return $codeChallenge;
+        return urlencode(base64_encode($encryptedCodeVerifier));
+        // $codeChallenge = rtrim(strtr(base64_encode($challengeBytes), '+/', '-_'), '=');
+
+        // return $codeChallenge;
     }
 
     public function successLogin(Request $request)
@@ -85,7 +91,7 @@ class TestController extends Controller
         $appId = 'STG-201403826N-LAZADAPAY-ACCTVERIFY';
         $authCode = $request->input('code');
         $callback = 'https://pre.cupu.app/get/token';
-        $codeVerifier = random_bytes(32);
+        $codeVerifier = CODEVERIFIER;
         $grantType = 'authorization_code';
         $clientAssertionType = 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer';
         $jwkThumbprint = $this->generateJwkThumbprint($publicKeyPath);
@@ -99,9 +105,9 @@ class TestController extends Controller
             '&client_assertion_type=' . $clientAssertionType .
             '&client_assertion=' . $clientAssertion;
 
-        echo 'Redirect to get Token ------> ' . $url;
+        // echo 'Redirect to get Token ------> ' . $url;
 
-        // header('Location: ' . $url);
+        header('Location: ' . $url);
     }
 
     function generateJwkThumbprint($publicKeyPath){
