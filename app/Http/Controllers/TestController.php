@@ -23,27 +23,6 @@ define('CODECHALLENGE', 'Z2nQOxb0tXNZX0I72iL7L58vCkL4siVSXW%2F3WhDP0Yo%3D');
  
 class TestController extends Controller
 {
-    public function prd()
-    {
-        $endpoint = HOSTPRD . '/com/v4/authorize';
-        $appId = 'PROD-201403826N-LAZADAPAY-ACCTVERIFY';
-        $callback = 'https://cupu.app/login/success';
-        $scope = 'name';
-        $purposeId = '562225ca';
-        $codeChallenge = CODECHALLENGE;
-
-        $url = $endpoint . '?' . 'client_id=' . $appId .
-            '&scope=' . $scope . 
-            '&redirect_uri=' . $callback .
-            '&response_type=code' .
-            '&code_challenge=' . $codeChallenge .
-            '&code_challenge_method=S256' . 
-            '&purpose_id=' . $purposeId;
-
-
-        header('Location: ' . $url);
-    }
-
     public function pre()
     {
         // $codeVerifier = urlencode(base64_encode(random_bytes(32)));
@@ -111,6 +90,16 @@ class TestController extends Controller
                 'client_assertion_type' => $clientAssertionType,
                 'client_assertion' => $clientAssertion
             ]);
+
+
+        echo 'Request: ' . $endpoint . '<br />';
+        echo 'code: ' . $authCode . '<br />';
+        echo 'redirect_uri: ' . $callback . '<br />';
+        echo 'client_id: ' . $appId . '<br />';
+        echo 'code_verifier: ' . $codeVerifier . '<br />';
+        echo 'client_assertion_type: ' . $clientAssertionType . '<br />';
+        echo 'client_assertion: ' . $clientAssertion . '<br />';
+        echo 'DPoP: ' . $dpop . '<br />';
 
 
         var_dump($response->body());
