@@ -7,13 +7,15 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Jose\Component\KeyManagement\JWKFactory;
 use Jose\Component\Core\JWKSet;
-use Jose\Component\Signature\Algorithm\ES256;
+use Jose\Component\Signature\Algorithm\RS256;
 use Jose\Component\Signature\JWSBuilder;
 use Jose\Component\Core\AlgorithmManager;
 use Jose\Component\Signature\Serializer\CompactSerializer;
 
 define('HOSTPRD', 'https://api.myinfo.gov.sg');
 define('HOSTPRE', 'https://test.api.myinfo.gov.sg');
+define('PATHPUBLICKEY', '/app/jwk/public-key2.pem');
+define('PATHPRIVATEKEY', '/app/jwk/private-key2.pem');
  
 class TestController extends Controller
 {
@@ -73,8 +75,8 @@ class TestController extends Controller
     {
         // https://sandbox.api.myinfo.gov.sg/com/v4/token
 
-        $publicKeyPath = storage_path('/app/jwk/public-key.pem');
-        $privateKeyPath = storage_path('/app/jwk/private-key.pem');
+        $publicKeyPath = storage_path(PATHPUBLICKEY);
+        $privateKeyPath = storage_path(PATHPRIVATEKEY);
 
         // $publicKeyPath = storage_path('/app/jwk/pre_cupu_app.crt');
         // $privateKeyPath = storage_path('/app/jwk/pre.cupuapp.key');
@@ -103,9 +105,8 @@ class TestController extends Controller
     }
 
     function generateJwkThumbprint($publicKeyPath){
-        $jwk = JWKFactory::createFromKeyFile(
+        $jwk = JWKFactory::createFromCertificateFile(
             $publicKeyPath,
-            null,
             [
                 'use' => 'sig',
             ]
@@ -118,9 +119,8 @@ class TestController extends Controller
 
     function generateClientAssertion($tokenUrl, $clientId, $privateKeyPath, $jwkThumbprint){
 
-        $jwk = JWKFactory::createFromKeyFile(
+        $jwk = JWKFactory::createFromCertificateFile(
             $privateKeyPath,
-            null,
             [
                 'use' => 'sig',
             ]
@@ -143,7 +143,7 @@ class TestController extends Controller
 
         // JWS
         $algorithmManager = new AlgorithmManager([
-            new ES256(),
+            new RS256(),
         ]);
 
         $jwsBuilder = new JWSBuilder($algorithmManager);
@@ -151,7 +151,7 @@ class TestController extends Controller
         $jws = $jwsBuilder
             ->create()
             ->withPayload($payload)
-            ->addSignature($jwk, ['alg' => 'ES256', 'typ' => 'JWT'])
+            ->addSignature($jwk, ['alg' => 'RS256', 'typ' => 'JWT'])
             ->build();
 
         $serializer = new CompactSerializer(); // The serializer
@@ -165,11 +165,10 @@ class TestController extends Controller
 
     public function jwks(){
 
-        $publicKeyPath = storage_path('/app/jwk/public-key.pem');
+        $publicKeyPath = storage_path(PATHPUBLICKEY);
 
-        $jwk = JWKFactory::createFromKeyFile(
+        $jwk = JWKFactory::createFromCertificateFile(
             $publicKeyPath,
-            null,
             [
                 'use' => 'sig',
             ]
