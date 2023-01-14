@@ -155,7 +155,7 @@ class TestController extends Controller
 
         // JWS
         $algorithmManager = new AlgorithmManager([
-            new RS256(),
+            new ES256(),
         ]);
 
         $jwsBuilder = new JWSBuilder($algorithmManager);
@@ -163,7 +163,7 @@ class TestController extends Controller
         $jws = $jwsBuilder
             ->create()
             ->withPayload($payload)
-            ->addSignature($jwk, ['alg' => 'RS256', 'typ' => 'JWT'])
+            ->addSignature($jwk, ['alg' => 'ES256', 'typ' => 'JWT'])
             ->build();
 
         $serializer = new CompactSerializer(); // The serializer
@@ -172,7 +172,7 @@ class TestController extends Controller
     }
 
     function generateDpop($url, $method, $publicKeyPath, $privateKeyPath, $ath){
-        $timestamp = date();
+        $timestamp = time();
 
         $payload = [
             'htu' => url,
