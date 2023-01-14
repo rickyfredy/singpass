@@ -83,8 +83,8 @@ class TestController extends Controller
         $codeVerifier = random_bytes(32);
         $grantType = 'authorization_code';
         $clientAssertionType = 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer';
-        $jktThumbprint = $this->generateJwkThumbprint($publicKeyPath);
-        $clientAssertion = $this->generateClientAssertion($endpoint, $appId, $privateKeyPath, $jktThumbprint);
+        $jwkThumbprint = $this->generateJwkThumbprint($publicKeyPath);
+        $clientAssertion = $this->generateClientAssertion($endpoint, $appId, $privateKeyPath, $jwkThumbprint);
 
         $url = $endpoint . '?' . 'grant_type=' . $grantType .
             '&code=' . $authCode .
@@ -94,9 +94,9 @@ class TestController extends Controller
             '&client_assertion_type=' . $clientAssertionType .
             '&client_assertion=' . $clientAssertion;
 
-        // echo 'Redirect to get Token ------> ' . $url;
+        echo 'Redirect to get Token ------> ' . $url;
 
-        header('Location: ' . $url);
+        // header('Location: ' . $url);
     }
 
     function generateJwkThumbprint($publicKeyPath){
@@ -112,11 +112,11 @@ class TestController extends Controller
         return $jwkThumbprint;
     }
 
-    function generateClientAssertion($tokenUrl, $clientId, $privateKeyPath, $jktThumbprint){
+    function generateClientAssertion($tokenUrl, $clientId, $privateKeyPath, $jwkThumbprint){
 
         $jwk = JWKFactory::createFromPKCS12CertificateFile(
             $privateKeyPath,
-            null,
+            '',
             [
                 'use' => 'sig',
             ]
@@ -133,7 +133,7 @@ class TestController extends Controller
             'iat' => $timestamp,
             'exp' => $timestamp + 300,
             'cnf' => [
-                'jkt' => $jktThumbprint
+                'jkt' => $jwkThumbprint
             ]
         ]);
 
@@ -147,7 +147,7 @@ class TestController extends Controller
         $jws = $jwsBuilder
             ->create()
             ->withPayload($payload)
-            ->addSignature($jwk, ['alg' => 'ES256'])
+            ->addSignature($jwk, ['alg' => 'ES256', 'typ' => 'JWT'])
             ->build();
 
         $serializer = new CompactSerializer(); // The serializer
