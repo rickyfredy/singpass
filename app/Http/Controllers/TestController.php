@@ -14,8 +14,8 @@ use Jose\Component\Signature\Serializer\CompactSerializer;
 
 define('HOSTPRD', 'https://api.myinfo.gov.sg');
 define('HOSTPRE', 'https://test.api.myinfo.gov.sg');
-define('PATHPUBLICKEY', '/app/jwk/public-key2.pem');
-define('PATHPRIVATEKEY', '/app/jwk/private-key2.pem');
+define('PATHPUBLICKEY', '/app/jwk/pre_cupu_app.crt');
+define('PATHPRIVATEKEY', '/app/jwk/pre.cupuapp.key');
 define('CODEVERIFIER', '%2BaU3NYPUsP0cbk5%2BSAWtlFkKWG5hPllumdEuYiVSOpQ%3D');
 define('CODECHALLENGE', 'Z2nQOxb0tXNZX0I72iL7L58vCkL4siVSXW%2F3WhDP0Yo%3D');
  
@@ -127,7 +127,7 @@ class TestController extends Controller
 
         $jwk = JWKFactory::createFromKeyFile(
             $privateKeyPath,
-            'admin',
+            null,
             [
                 'use' => 'sig',
             ]
