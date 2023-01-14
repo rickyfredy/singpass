@@ -205,7 +205,7 @@ class TestController extends Controller
 
         $jws = $jwsBuilder
             ->create()
-            ->withPayload($payload)
+            ->withPayload(json_encode($payload))
             ->addSignature($jwk, ['alg' => 'ES256', 'typ' => 'dpop+jwt', 'jwk' => $jwk->jsonSerialize()])
             ->build();
 
