@@ -113,7 +113,7 @@ class TestController extends Controller
             ]);
 
 
-        var_dump($response);
+        var_dump($response->body());
     }
 
     function generateJwkThumbprint($publicKeyPath){
