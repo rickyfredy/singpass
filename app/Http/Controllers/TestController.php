@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Jose\Component\KeyManagement\JWKFactory;
 use Jose\Component\Core\JWKSet;
 use Jose\Component\Signature\Algorithm\ES256;
+use Jose\Component\Signature\Algorithm\RS256;
 use Jose\Component\Signature\JWSBuilder;
 use Jose\Component\Core\AlgorithmManager;
 use Jose\Component\Signature\Serializer\CompactSerializer;
