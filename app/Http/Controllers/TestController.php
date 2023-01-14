@@ -175,8 +175,8 @@ class TestController extends Controller
         $timestamp = time();
 
         $payload = [
-            'htu' => url,
-            'htm' => method,
+            'htu' => $url,
+            'htm' => $method,
             'jti' => Str::random(40),
             'iat' => $timestamp,
             'exp' => $timestamp + 120,
