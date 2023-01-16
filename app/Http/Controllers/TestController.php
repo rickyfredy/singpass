@@ -165,11 +165,12 @@ class TestController extends Controller
 
     function generateDpop($url, $method, $publicKeyPath, $privateKeyPath, $ath){
         $timestamp = time();
+        $randomStr = Str::random(40);
 
         $payload = [
             'htu' => $url,
             'htm' => $method,
-            'jti' => Str::random(40),
+            'jti' => $randomStr,
             'iat' => $timestamp,
             'exp' => $timestamp + 120,
         ];
