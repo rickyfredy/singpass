@@ -179,11 +179,6 @@ class TestController extends Controller
             $payload['ath'] = $ath;
         }
 
-        echo 'DPop: ' . json_encode($payload) . '<br /><br />';
-        echo 'JWK serialize: ' . $jwk->jsonSerialize() . '<br /><br />';
-        echo 'JWK: ' . $jwk . '<br /><br />';
-
-
         // JWK
         $privateKeyJwk = JWKFactory::createFromKeyFile(
             $privateKeyPath,
@@ -199,6 +194,11 @@ class TestController extends Controller
                 'use' => 'sig',
             ]
         );
+
+        echo 'DPop: ' . json_encode($payload) . '<br /><br />';
+        echo 'JWK serialize: ' . $jwk->jsonSerialize() . '<br /><br />';
+        echo 'JWK: ' . $jwk . '<br /><br />';
+
 
 
         // JWS
