@@ -196,7 +196,7 @@ class TestController extends Controller
         );
 
         echo 'DPop: ' . json_encode($payload) . '<br /><br />';
-        echo 'JWK serialize: ' . $jwk->jsonSerialize() . '<br /><br />';
+        echo 'JWK serialize: ' . json_encode($jwk->jsonSerialize()) . '<br /><br />';
         echo 'JWK: ' . $jwk . '<br /><br />';
 
 
@@ -211,7 +211,7 @@ class TestController extends Controller
         $jws = $jwsBuilder
             ->create()
             ->withPayload(json_encode($payload))
-            ->addSignature($privateKeyJwk, ['alg' => 'RS256', 'typ' => 'dpop+jwt', 'jwk' => $jwk])
+            ->addSignature($privateKeyJwk, ['alg' => 'RS256', 'typ' => 'dpop+jwt', 'jwk' => json_encode($jwk->jsonSerialize())])
             ->build();
 
         $serializer = new CompactSerializer(); // The serializer
