@@ -92,13 +92,14 @@ class TestController extends Controller
             ]);
 
 
-        echo 'Request: ' . $endpoint . '<br />';
+        echo 'Request: ' . $endpoint . '<br /><br />';
+        echo 'grant_type: ' . $grantType . '<br />';
         echo 'code: ' . $authCode . '<br />';
         echo 'redirect_uri: ' . $callback . '<br />';
         echo 'client_id: ' . $appId . '<br />';
         echo 'code_verifier: ' . $codeVerifier . '<br />';
         echo 'client_assertion_type: ' . $clientAssertionType . '<br />';
-        echo 'client_assertion: ' . $clientAssertion . '<br />';
+        echo 'client_assertion: ' . $clientAssertion . '<br /><br />';
         echo 'DPoP: ' . $dpop . '<br /><br />';
 
         echo 'Response: ' . $response->body();
@@ -112,7 +113,7 @@ class TestController extends Controller
             ]
         );
 
-        $jwkThumbprint = $jwk->thumbprint('sha256');
+        $jwkThumbprint = base64_encode($jwk->thumbprint('sha256'));
 
         return $jwkThumbprint;
     }
@@ -141,6 +142,8 @@ class TestController extends Controller
                 'jkt' => $jwkThumbprint
             ]
         ]);
+
+        echo 'Client Assertion: ' . json_encode($payload) . '<br /><br />';
 
         // JWS
         $algorithmManager = new AlgorithmManager([
