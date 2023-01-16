@@ -197,9 +197,6 @@ class TestController extends Controller
 
         echo 'DPop: ' . json_encode($payload) . '<br /><br />';
         echo 'JWK serialize: ' . json_encode($jwk->jsonSerialize()) . '<br /><br />';
-        echo 'JWK: ' . $jwk . '<br /><br />';
-
-
 
         // JWS
         $algorithmManager = new AlgorithmManager([
